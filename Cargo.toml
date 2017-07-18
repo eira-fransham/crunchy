@@ -1,0 +1,6 @@
+[package]
+name = "crunchy"
+version = "0.1.0"
+authors = ["Vurich <jackefransham@hotmail.co.uk>"]
+
+[dependencies]
