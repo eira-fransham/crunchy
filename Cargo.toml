@@ -2,7 +2,7 @@
 name = "crunchy"
 version = "0.1.0"
 authors = ["Vurich <jackefransham@hotmail.co.uk>"]
-description = "Deterministically unroll constant loops"
+description = "Crunchy unroller: deterministically unroll constant loops"
 license = "MIT"
 
 [dependencies]
