@@ -5,18 +5,6 @@ use std::path::Path;
 
 const LOWER_LIMIT: usize = 16;
 
-const START: &'static str = r"
-#[macro_export]
-macro_rules! unroll {
-    (for $v:ident in 0..0 $c:block) => {};
-
-    (for $v:ident in 0..$b:tt {$($c:tt)*}) => {
-        #[allow(non_upper_case_globals)]
-        { unroll!(@$v, 0, $b, {$($c)*}); }
-    };
-
-";
-
 fn main() {
     let limit = if env::var("CARGO_FEATURE_limit_2048").is_ok() {
         2048
@@ -38,7 +26,17 @@ fn main() {
 
     let mut output = String::new();
 
-    output.push_str(START);
+    output.push_str(r"
+#[macro_export]
+macro_rules! unroll {
+    (for $v:ident in 0..0 $c:block) => {};
+
+    (for $v:ident in 0..$b:tt {$($c:tt)*}) => {
+        #[allow(non_upper_case_globals)]
+        { unroll!(@$v, 0, $b, {$($c)*}); }
+    };
+
+");
 
     for i in 0..limit + 1 {
         output.push_str(format!("    (@$v:ident, $a:expr, {}, $c:block) => {{\n", i).as_str());
