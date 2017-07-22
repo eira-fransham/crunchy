@@ -1,6 +1,6 @@
 [package]
 name = "crunchy"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Vurich <jackefransham@hotmail.co.uk>"]
 description = "Crunchy unroller: deterministically unroll constant loops"
 license = "MIT"
