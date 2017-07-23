@@ -6,15 +6,15 @@ use std::path::Path;
 const LOWER_LIMIT: usize = 16;
 
 fn main() {
-    let limit = if env::var("CARGO_FEATURE_limit_2048").is_ok() {
+    let limit = if cfg!(feature="limit_2048") {
         2048
-    } else if env::var("CARGO_FEATURE_limit_1024").is_ok() {
+    } else if cfg!(feature="limit_1024") {
         1024
-    } else if env::var("CARGO_FEATURE_limit_512").is_ok() {
+    } else if cfg!(feature="limit_512") {
         512
-    } else if env::var("CARGO_FEATURE_limit_256").is_ok() {
+    } else if cfg!(feature="limit_256") {
         256
-    } else if env::var("CARGO_FEATURE_limit_128").is_ok() {
+    } else if cfg!(feature="limit_128") {
         128
     } else {
         64
