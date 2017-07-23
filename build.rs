@@ -26,7 +26,28 @@ fn main() {
 
     let mut output = String::new();
 
-    output.push_str(r"
+    output.push_str(r#"
+/// Unroll the given for loop
+///
+/// Example:
+///
+/// ```ignore
+/// unroll! {
+///   for i in 0..5 {
+///     println!("Iteration {}", i);
+///   }
+/// }
+/// ```
+///
+/// will expand into:
+///
+/// ```ignore
+/// { println!("Iteration {}", 0); }
+/// { println!("Iteration {}", 1); }
+/// { println!("Iteration {}", 2); }
+/// { println!("Iteration {}", 3); }
+/// { println!("Iteration {}", 4); }
+/// ```
 #[macro_export]
 macro_rules! unroll {
     (for $v:ident in 0..0 $c:block) => {};
@@ -36,11 +57,11 @@ macro_rules! unroll {
         { unroll!(@$v, 0, $b, {$($c)*}); }
     };
 
-");
+"#);
 
     for i in 0..limit + 1 {
         output.push_str(format!("    (@$v:ident, $a:expr, {}, $c:block) => {{\n", i).as_str());
-        
+
         if i <= LOWER_LIMIT {
             output.push_str(format!("        {{ const $v: usize = $a; $c }}\n").as_str());
 

@@ -28,3 +28,11 @@ unroll! {
 ```
 
 This means that your tests will catch if you redefine the constant.
+
+To default maximum number of loops to unroll is `64`, but that can be easily increased using the cargo features:
+
+* `limit_128`
+* `limit_256`
+* `limit_512`
+* `limit_1024`
+* `limit_2048`
