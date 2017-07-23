@@ -40,27 +40,25 @@ macro_rules! unroll {
 
     for i in 0..limit + 1 {
         output.push_str(format!("    (@$v:ident, $a:expr, {}, $c:block) => {{\n", i).as_str());
-
-        let limit = i;
-
-        if limit <= LOWER_LIMIT {
+        
+        if i <= LOWER_LIMIT {
             output.push_str(format!("        {{ const $v: usize = $a; $c }}\n").as_str());
 
-            for a in 1..limit {
+            for a in 1..i {
                 output.push_str(format!("        {{ const $v: usize = $a + {}; $c }}\n", a).as_str());
             }
         } else {
-            let half = limit / 2;
+            let half = i / 2;
 
-            if limit % 2 == 0 {
+            if i % 2 == 0 {
                 output.push_str(format!("        unroll!(@$v, $a, {0}, $c);\n", half).as_str());
                 output.push_str(format!("        unroll!(@$v, $a + {0}, {0}, $c);\n", half).as_str());
             } else {
                 if half > 1 {
-                    output.push_str(format!("        unroll!(@$v, $a, {}, $c);\n", limit - 1).as_str())
+                    output.push_str(format!("        unroll!(@$v, $a, {}, $c);\n", i - 1).as_str())
                 }
 
-                output.push_str(format!("        {{ const $v: usize = $a + {}; $c }}\n", limit - 1).as_str());
+                output.push_str(format!("        {{ const $v: usize = $a + {}; $c }}\n", i - 1).as_str());
             }
         }
 
