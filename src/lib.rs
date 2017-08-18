@@ -31,4 +31,6 @@
 //! * `limit_1024`
 //! * `limit_2048`
 
+#![no_std]
+
 include!(concat!(env!("OUT_DIR"), "/lib.rs"));
