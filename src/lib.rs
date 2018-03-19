@@ -31,6 +31,6 @@
 //! * `limit_1024`
 //! * `limit_2048`
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 include!(concat!(env!("OUT_DIR"), "/lib.rs"));

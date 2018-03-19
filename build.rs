@@ -52,9 +52,53 @@ fn main() {
 macro_rules! unroll {
     (for $v:ident in 0..0 $c:block) => {};
 
-    (for $v:ident in 0..$b:tt {$($c:tt)*}) => {
+    (for $v:ident < $max:tt in ($start:tt..$end:tt).step_by($val:expr) {$($c:tt)*}) => {
+        {
+            let step = $val;
+            let start = $start;
+            let end = start + ($end - start) / step;
+            unroll! {
+                for val < $max in start..end {
+                    let $v: usize = ((val - start) * step) + start;
+
+                    $($c)*
+                }
+            }
+        }
+    };
+
+    (for $v:ident in ($start:tt..$end:tt).step_by($val:expr) {$($c:tt)*}) => {
+        unroll! {
+            for $v < $end in ($start..$end).step_by($val) {$($c)*}
+        }
+    };
+
+    (for $v:ident < $max:tt in $start:tt..$end:tt $c:block) => {
         #[allow(non_upper_case_globals)]
-        { unroll!(@$v, 0, $b, {$($c)*}); }
+        {
+            let range = $start..$end;
+            assert!(
+                $max >= range.end,
+                "`{}` out of range `{:?}`",
+                stringify!($max),
+                range,
+            );
+            unroll!(
+                @$v,
+                0,
+                $max,
+                {
+                    if $v >= range.start && $v < range.end {
+                        $c
+                    }
+                }
+            );
+        }
+    };
+
+    (for $v:ident in 0..$end:tt {$($statement:tt)*}) => {
+        #[allow(non_upper_case_globals)]
+        { unroll!(@$v, 0, $end, {$($statement)*}); }
     };
 
 "#);
@@ -88,8 +132,8 @@ macro_rules! unroll {
 
     output.push_str("}\n\n");
 
-    output.push_str(format!(r"
-#[cfg(test)]
+    output.push_str(format!(r#"
+#[cfg(all(test, feature = "std"))]
 mod tests {{
     #[test]
     fn test_all() {{
@@ -120,9 +164,40 @@ mod tests {{
             }}
             assert_eq!(a, (0..{0}).collect::<Vec<usize>>());
         }}
+        {{
+            let mut a: Vec<usize> = vec![];
+            let start = {0} / 4;
+            let end = start * 3;
+            unroll! {{
+                for i < {0} in start..end {{
+                    a.push(i);
+                }}
+            }}
+            assert_eq!(a, (start..end).collect::<Vec<usize>>());
+        }}
+        {{
+            let mut a: Vec<usize> = vec![];
+            unroll! {{
+                for i in (0..{0}).step_by(2) {{
+                    a.push(i);
+                }}
+            }}
+            assert_eq!(a, (0..{0} / 2).map(|x| x * 2).collect::<Vec<usize>>());
+        }}
+        {{
+            let mut a: Vec<usize> = vec![];
+            let start = {0} / 4;
+            let end = start * 3;
+            unroll! {{
+                for i < {0} in (start..end).step_by(2) {{
+                    a.push(i);
+                }}
+            }}
+            assert_eq!(a, (start..end).filter(|x| x % 2 == 0).collect::<Vec<usize>>());
+        }}
     }}
 }}
-", limit).as_str());
+"#, limit).as_str());
 
     f.write_all(output.as_bytes()).unwrap();
 }
