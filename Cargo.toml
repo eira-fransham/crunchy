@@ -4,6 +4,7 @@ version = "0.2.1"
 authors = ["Vurich <jackefransham@hotmail.co.uk>"]
 description = "Crunchy unroller: deterministically unroll constant loops"
 license = "MIT"
+repository = "https://github.com/Vurich/crunchy"
 build = "build.rs"
 
 [dependencies]
