@@ -73,6 +73,23 @@ macro_rules! unroll {
         }
     };
 
+    (for $v:ident in ($start:tt..$end:tt) {$($c:tt)*}) => {
+        unroll!{
+            for $v in $start..$end {$($c)*}
+        }
+    };
+
+    (for $v:ident in $start:tt..$end:tt {$($c:tt)*}) => {
+        #[allow(non_upper_case_globals)]
+        #[allow(unused_comparisons)]
+        {
+            unroll!(@$v, 0, $end, {
+                    if $v >= $start {$($c)*}
+                }
+            );
+        }
+    };
+
     (for $v:ident < $max:tt in $start:tt..$end:tt $c:block) => {
         #[allow(non_upper_case_globals)]
         {
@@ -135,6 +152,39 @@ macro_rules! unroll {
     output.push_str(format!(r#"
 #[cfg(all(test, feature = "std"))]
 mod tests {{
+    #[test]
+    fn invalid_range() {{
+        let mut a: Vec<usize> = vec![];
+        unroll! {{
+                for i in (5..4) {{
+                    a.push(i);
+                }}
+            }}
+        assert_eq!(a, vec![]);
+    }}
+
+    #[test]
+    fn start_at_one_with_step() {{
+        let mut a: Vec<usize> = vec![];
+        unroll! {{
+                for i in (2..4).step_by(1) {{
+                    a.push(i);
+                }}
+            }}
+        assert_eq!(a, vec![2, 3]);
+    }}
+
+    #[test]
+    fn start_at_one() {{
+        let mut a: Vec<usize> = vec![];
+        unroll! {{
+                for i in 1..4 {{
+                    a.push(i);
+                }}
+            }}
+        assert_eq!(a, vec![1, 2, 3]);
+    }}
+
     #[test]
     fn test_all() {{
         {{
