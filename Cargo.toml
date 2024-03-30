@@ -3,6 +3,7 @@ name = "crunchy"
 version = "0.2.3"
 authors = ["Vurich <jackefransham@hotmail.co.uk>"]
 description = "Crunchy unroller: deterministically unroll constant loops"
+repository = "https://github.com/eira-fransham/crunchy"
 license = "MIT"
 build = "build.rs"
 
