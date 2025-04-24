@@ -33,8 +33,5 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(target_os = "windows")]
-include!(concat!(env!("OUT_DIR"), "\\lib.rs"));
+include!(concat!(env!("OUT_DIR"), env!("CRUNCHY_LIB_SUFFIX")));
 
-#[cfg(not(target_os = "windows"))]
-include!(concat!(env!("OUT_DIR"), "/lib.rs"));
